@@ -5,6 +5,9 @@
 #include <cuda_runtime.h>
 #include "cuda_utils.h"
 
+namespace CuArrays
+{
+
 /*
  * Class definition
  *
@@ -101,6 +104,8 @@ const T& ManagedArray2D<T>::operator()(unsigned int i, unsigned int j) const
 template <typename T>
 void ManagedArray2D<T>::mallocDevice(int N, int M)
 {
+    using namespace cuda_utils;
+
     assert(d_ptr == 0);
 
     _N = N;
@@ -116,6 +121,8 @@ void ManagedArray2D<T>::mallocDevice(int N, int M)
 template <typename T>
 void ManagedArray2D<T>::mallocHost(int N, int M)
 {
+    using namespace cuda_utils;
+
     assert(h_ptr == 0);
 
     _N = N;
@@ -134,6 +141,8 @@ void ManagedArray2D<T>::malloc(int N, int M)
 template <typename T>
 void ManagedArray2D<T>::freeDevice()
 {
+    using namespace cuda_utils;
+
     assert(d_ptr != 0);
 
     Array2D<T> arr;
@@ -147,6 +156,8 @@ void ManagedArray2D<T>::freeDevice()
 template <typename T>
 void ManagedArray2D<T>::freeHost()
 {
+    using namespace cuda_utils;
+
     assert(h_ptr != 0);
 
     cudaVerify( cudaFreeHost(h_ptr) );
@@ -164,6 +175,8 @@ void ManagedArray2D<T>::free()
 template <typename T>
 void ManagedArray2D<T>::copyToDevice()
 {
+    using namespace cuda_utils;
+
     cudaVerify( cudaMemcpy2D(d_ptr, d_pitch,
                              h_ptr, _N * sizeof(T),
                              _N * sizeof(T), _M,
@@ -173,6 +186,8 @@ void ManagedArray2D<T>::copyToDevice()
 template <typename T>
 void ManagedArray2D<T>::copyToDeviceAsync()
 {
+    using namespace cuda_utils;
+
     cudaVerify( cudaMemcpy2DAsync(d_ptr, d_pitch,
                                   h_ptr, _N * sizeof(T),
                                   _N * sizeof(T), _M,
@@ -182,6 +197,8 @@ void ManagedArray2D<T>::copyToDeviceAsync()
 template <typename T>
 void ManagedArray2D<T>::copyFromDevice()
 {
+    using namespace cuda_utils;
+
     cudaVerify( cudaMemcpy2D(h_ptr, _N * sizeof(T),
                              d_ptr, d_pitch,
                              _N * sizeof(T), _M,
@@ -191,8 +208,12 @@ void ManagedArray2D<T>::copyFromDevice()
 template <typename T>
 void ManagedArray2D<T>::copyFromDeviceAsync()
 {
+    using namespace cuda_utils;
+
     cudaVerify( cudaMemcpy2DAsync(h_ptr, _N * sizeof(T),
                                   d_ptr, d_pitch,
                                   _N * sizeof(T), _M,
                                   cudaMemcpyDeviceToHost) );
+}
+
 }

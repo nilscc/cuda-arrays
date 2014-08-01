@@ -1,5 +1,8 @@
 #pragma once
 
+namespace CuArrays
+{
+
 template <typename T> class ManagedArray2D;
 
 /*
@@ -98,4 +101,6 @@ template <typename T>
 __device__ const T& Array2D<T>::get(unsigned int i, unsigned int j) const
 {
     return operator()(i,j);
+}
+
 }

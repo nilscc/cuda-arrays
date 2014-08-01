@@ -3,6 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+namespace CuArrays
+{
+namespace cuda_utils
+{
+
 #ifndef __USE_POSIX199309
 #define __USE_POSIX199309
 #include <time.h>
@@ -66,3 +71,6 @@ static inline double getTimerDifference(Timer* timerStart,Timer* timerEnd) {
     x;                                                                   \
   } while(0)
 #endif
+
+}
+}

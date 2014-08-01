@@ -5,6 +5,9 @@
 #include <cuda_runtime.h>
 #include "cuda_utils.h"
 
+namespace CuArrays
+{
+
 template <typename T> class Array;
 
 /*
@@ -93,6 +96,8 @@ int ManagedArray<T>::N() const { return _N; }
 template <typename T>
 void ManagedArray<T>::mallocDevice(int N)
 {
+    using namespace cuda_utils;
+
     assert(d_ptr == 0);
 
     _N = N;
@@ -107,6 +112,8 @@ void ManagedArray<T>::mallocDevice(int N)
 template <typename T>
 void ManagedArray<T>::mallocHost(int N)
 {
+    using namespace cuda_utils;
+
     assert(h_ptr == 0);
 
     _N = N;
@@ -124,6 +131,8 @@ void ManagedArray<T>::malloc(int N)
 template <typename T>
 void ManagedArray<T>::freeDevice()
 {
+    using namespace cuda_utils;
+
     assert(d_ptr != 0);
 
     Array<T> arr;
@@ -137,6 +146,8 @@ void ManagedArray<T>::freeDevice()
 template <typename T>
 void ManagedArray<T>::freeHost()
 {
+    using namespace cuda_utils;
+
     assert(h_ptr != 0);
 
     cudaVerify( cudaFreeHost(h_ptr) );
@@ -154,23 +165,33 @@ void ManagedArray<T>::free()
 template <typename T>
 void ManagedArray<T>::copyToDevice()
 {
+    using namespace cuda_utils;
+
     cudaVerify( cudaMemcpy(d_ptr, h_ptr, _N * sizeof(T), cudaMemcpyHostToDevice) );
 }
 
 template <typename T>
 void ManagedArray<T>::copyToDeviceAsync()
 {
+    using namespace cuda_utils;
+
     cudaVerify( cudaMemcpyAsync(d_ptr, h_ptr, _N * sizeof(T), cudaMemcpyHostToDevice) );
 }
 
 template <typename T>
 void ManagedArray<T>::copyFromDevice()
 {
+    using namespace cuda_utils;
+
     cudaVerify( cudaMemcpy(h_ptr, d_ptr, _N * sizeof(T), cudaMemcpyDeviceToHost) );
 }
 
 template <typename T>
 void ManagedArray<T>::copyFromDeviceAsync()
 {
+    using namespace cuda_utils;
+
     cudaVerify( cudaMemcpyAsync(h_ptr, d_ptr, _N * sizeof(T), cudaMemcpyDeviceToHost) );
+}
+
 }

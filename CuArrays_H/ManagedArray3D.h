@@ -5,6 +5,9 @@
 #include <cuda_runtime.h>
 #include "cuda_utils.h"
 
+namespace CuArrays
+{
+
 template <typename T> class Array3D;
 
 template <typename T>
@@ -101,6 +104,8 @@ const T& ManagedArray3D<T>::operator()(unsigned int i, unsigned int j, unsigned 
 template <typename T>
 void ManagedArray3D<T>::mallocDevice(int N, int M, int O)
 {
+    using namespace cuda_utils;
+
     assert(d_pitched_ptr.ptr == 0);
 
     _N = N;
@@ -114,6 +119,7 @@ void ManagedArray3D<T>::mallocDevice(int N, int M, int O)
     cudaExtent extent = make_cudaExtent(_N * sizeof(T), _M, _O);
 
     cudaVerify( cudaMalloc3D(&d_pitched_ptr, extent) );
+    cudaVerify( cudaMemset3D(d_pitched_ptr, 0, extent) );
 
     Array3D<T> arr(d_pitched_ptr.ptr, d_pitched_ptr.pitch, _N, _M, _O);
 
@@ -123,6 +129,8 @@ void ManagedArray3D<T>::mallocDevice(int N, int M, int O)
 template <typename T>
 void ManagedArray3D<T>::mallocHost(int N, int M, int O)
 {
+    using namespace cuda_utils;
+
     assert(h_ptr == 0);
 
     _N = N;
@@ -146,6 +154,8 @@ void ManagedArray3D<T>::malloc(int N, int M, int O)
 template <typename T>
 void ManagedArray3D<T>::freeDevice()
 {
+    using namespace cuda_utils;
+
     assert(d_pitched_ptr.ptr != 0);
 
     Array3D<T> arr;
@@ -159,6 +169,8 @@ void ManagedArray3D<T>::freeDevice()
 template <typename T>
 void ManagedArray3D<T>::freeHost()
 {
+    using namespace cuda_utils;
+
     assert(h_ptr != 0);
 
     cudaVerify( cudaFreeHost(h_ptr) );
@@ -176,17 +188,13 @@ void ManagedArray3D<T>::free()
 template <typename T>
 cudaPitchedPtr ManagedArray3D<T>::make_h_pitched_ptr()
 {
+    using namespace cuda_utils;
+
     cudaPitchedPtr p = make_cudaPitchedPtr(
             h_ptr,
             _N * sizeof(T),
             _M,
             _O);
-
-    // p.ptr = (void*) h_ptr;
-    // p.pitch = _N * sizeof(T);
-    // p.xsize = _M;
-    // p.ysize = _O;
-
     return p;
 }
 
@@ -199,6 +207,8 @@ cudaExtent ManagedArray3D<T>::make_extent()
 template <typename T>
 cudaMemcpy3DParms ManagedArray3D<T>::make_3Dparms(cudaMemcpyKind kind, cudaPitchedPtr src, cudaPitchedPtr dst)
 {
+    using namespace cuda_utils;
+
     cudaMemcpy3DParms par = {0};
 
     par.srcPtr = src;
@@ -212,6 +222,8 @@ cudaMemcpy3DParms ManagedArray3D<T>::make_3Dparms(cudaMemcpyKind kind, cudaPitch
 template <typename T>
 void ManagedArray3D<T>::copy(cudaMemcpyKind kind, cudaPitchedPtr src, cudaPitchedPtr dst)
 {
+    using namespace cuda_utils;
+
     cudaMemcpy3DParms par = make_3Dparms(kind, src, dst);
     cudaVerify( cudaMemcpy3D(&par) );
 }
@@ -219,6 +231,8 @@ void ManagedArray3D<T>::copy(cudaMemcpyKind kind, cudaPitchedPtr src, cudaPitche
 template <typename T>
 void ManagedArray3D<T>::copyAsync(cudaMemcpyKind kind, cudaPitchedPtr src, cudaPitchedPtr dst)
 {
+    using namespace cuda_utils;
+
     cudaMemcpy3DParms par = make_3Dparms(kind, src, dst);
     cudaVerify( cudaMemcpy3DAsync(&par) );
 }
@@ -245,4 +259,6 @@ template <typename T>
 void ManagedArray3D<T>::copyFromDeviceAsync()
 {
     copyAsync(cudaMemcpyDeviceToHost, d_pitched_ptr, make_h_pitched_ptr());
+}
+
 }

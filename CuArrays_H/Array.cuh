@@ -1,5 +1,8 @@
 #pragma once
 
+namespace CuArrays
+{
+
 template <typename T> class ManagedArray;
 
 /*
@@ -63,4 +66,6 @@ __device__
 T& Array<T>::operator()(unsigned int i)
 {
     return get(i);
+}
+
 }

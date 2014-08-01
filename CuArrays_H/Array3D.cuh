@@ -1,5 +1,8 @@
 #pragma once
 
+namespace CuArrays
+{
+
 template <typename T> class ManagedArray3D;
 
 /*
@@ -104,4 +107,6 @@ __device__
 const T& Array3D<T>::operator()(unsigned int i, unsigned int j, unsigned int k) const
 {
     return get(i,j,k);
+}
+
 }
