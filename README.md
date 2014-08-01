@@ -1,15 +1,15 @@
 # CuArrays: Multidimensional cuda arrays with proper memory management
 
-To use this library, simple import it in your .cu or .cpp files. See the
-example below.
+This is a headers only library. To use it, simple include `CuArrays` in your
+.cu or .cpp files. See the example below.
 
-To compile, add the `cuda-arrays/library` folder to your include path, e.g.:
+To compile, add the `cuda-arrays` folder to your include path, e.g.:
 
-    nvcc -I$HOME/local/include/cuda-arrays/library example.cu
+    nvcc -I$HOME/local/include/cuda-arrays example.cu
 
 For other compilers don't forget to include the CUDA runtime headers:
 
-    g++ -I$HOME/local/include/cuda-arrays/library \
+    g++ -I$HOME/local/include/cuda-arrays \
         -I/usr/local/cuda/include example.cpp
 
 
