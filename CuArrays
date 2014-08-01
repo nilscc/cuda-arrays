@@ -1,0 +1,11 @@
+#ifdef __CUDACC__
+
+#include "CuArrays_H/Array.cuh"
+#include "CuArrays_H/Array2D.cuh"
+#include "CuArrays_H/Array3D.cuh"
+
+#endif
+
+#include "CuArrays_H/ManagedArray.h"
+#include "CuArrays_H/ManagedArray2D.h"
+#include "CuArrays_H/ManagedArray3D.h"
