@@ -3,11 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-namespace CuArrays
-{
-namespace cuda_utils
-{
-
 #ifndef __USE_POSIX199309
 #define __USE_POSIX199309
 #include <time.h>
@@ -15,6 +10,11 @@ namespace cuda_utils
 #else
 #include <time.h>
 #endif
+
+namespace CuArrays
+{
+namespace cuda_utils
+{
 
 typedef struct timespec Timer;
 
