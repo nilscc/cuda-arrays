@@ -19,7 +19,7 @@ CXX ?= clang++
 
 CXX_INCLUDES = -I../src
 
-CXX_FLAGS = -O3 -G -g $(CXX_INCLUDES)
+CXX_FLAGS = -std=c++11 -O3 -G -g $(CXX_INCLUDES)
 CXX_LIBS  =
 CXX_DEPS  = $(TEST_CXX_DEPS)
 
