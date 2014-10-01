@@ -17,11 +17,9 @@ class ManagedArray3D
 
         Array3D<T> & symbol;
 
-        cudaPitchedPtr d_pitched_ptr;
+        int _N, _M, _O;
 
         T* h_ptr;
-
-        int _N, _M, _O;
 
     public:
 
@@ -40,19 +38,6 @@ class ManagedArray3D
         void freeDevice();
         void freeHost();
         void free();
-
-    private:
-
-        cudaPitchedPtr make_h_pitched_ptr();
-        cudaExtent make_extent();
-        cudaMemcpy3DParms make_3Dparms(
-                cudaMemcpyKind kind, cudaPitchedPtr src, cudaPitchedPtr dst);
-
-        void copy(cudaMemcpyKind kind, cudaPitchedPtr src, cudaPitchedPtr dst);
-        void copyAsync(
-                cudaMemcpyKind kind, cudaPitchedPtr src, cudaPitchedPtr dst);
-
-    public:
 
         void copyToDevice();
         void copyToDeviceAsync();
@@ -73,7 +58,6 @@ ManagedArray3D<T>::ManagedArray3D(Array3D<T> & symbol)
     _N = 0;
     _M = 0;
     _O = 0;
-    d_pitched_ptr.ptr = 0;
     h_ptr = 0;
 }
 
@@ -106,24 +90,19 @@ void ManagedArray3D<T>::mallocDevice(int N, int M, int O)
 {
     using namespace cuda_utils;
 
-    assert(d_pitched_ptr.ptr == 0);
-
     _N = N;
     _M = M;
     _O = O;
 
-    assert(_N > 0);
-    assert(_M > 0);
-    assert(_O > 0);
+    void *d_ptr;
+    size_t d_pitch;
 
-    cudaExtent extent = make_cudaExtent(_N * sizeof(T), _M, _O);
+    cudaVerify( cudaMallocPitch(&d_ptr, &d_pitch, N * sizeof(T), M * O) );
 
-    cudaVerify( cudaMalloc3D(&d_pitched_ptr, extent) );
-    cudaVerify( cudaMemset3D(d_pitched_ptr, 0, extent) );
+    Array2D<T> arr2d(d_ptr, d_pitch, _N, _M * _O);
+    Array3D<T> arr3d(arr2d, _N, _M, _O);
 
-    Array3D<T> arr(d_pitched_ptr.ptr, d_pitched_ptr.pitch, _N, _M, _O);
-
-    cudaVerify( cudaMemcpyToSymbol(symbol, &arr, sizeof(Array3D<T>)) );
+    cudaVerify( cudaMemcpyToSymbol(symbol, &arr3d, sizeof(Array3D<T>)) );
 }
 
 template <typename T>
@@ -156,14 +135,10 @@ void ManagedArray3D<T>::freeDevice()
 {
     using namespace cuda_utils;
 
-    assert(d_pitched_ptr.ptr != 0);
-
     Array3D<T> arr;
 
     cudaVerify( cudaMemcpyFromSymbol(&arr, symbol, sizeof(Array3D<T>)) );
-    cudaVerify( cudaFree(arr.d_ptr) );
-
-    d_pitched_ptr.ptr = 0;
+    cudaVerify( cudaFree(arr.array2d.d_ptr) );
 }
 
 template <typename T>
@@ -185,6 +160,7 @@ void ManagedArray3D<T>::free()
     freeHost();
 }
 
+/*
 template <typename T>
 cudaPitchedPtr ManagedArray3D<T>::make_h_pitched_ptr()
 {
@@ -195,6 +171,7 @@ cudaPitchedPtr ManagedArray3D<T>::make_h_pitched_ptr()
             _N * sizeof(T),
             _M,
             _O);
+
     return p;
 }
 
@@ -202,21 +179,6 @@ template <typename T>
 cudaExtent ManagedArray3D<T>::make_extent()
 {
     return make_cudaExtent(_N * sizeof(T), _M, _O);
-}
-
-template <typename T>
-cudaMemcpy3DParms ManagedArray3D<T>::make_3Dparms(cudaMemcpyKind kind, cudaPitchedPtr src, cudaPitchedPtr dst)
-{
-    using namespace cuda_utils;
-
-    cudaMemcpy3DParms par = {0};
-
-    par.srcPtr = src;
-    par.dstPtr = dst;
-    par.extent = make_extent();
-    par.kind   = kind;
-
-    return par;
 }
 
 template <typename T>
@@ -236,29 +198,30 @@ void ManagedArray3D<T>::copyAsync(cudaMemcpyKind kind, cudaPitchedPtr src, cudaP
     cudaMemcpy3DParms par = make_3Dparms(kind, src, dst);
     cudaVerify( cudaMemcpy3DAsync(&par) );
 }
+*/
 
 template <typename T>
 void ManagedArray3D<T>::copyToDevice()
 {
-    copy(cudaMemcpyHostToDevice, make_h_pitched_ptr(), d_pitched_ptr);
+    //copy(cudaMemcpyHostToDevice, make_h_pitched_ptr(), d_pitched_ptr);
 }
 
 template <typename T>
 void ManagedArray3D<T>::copyToDeviceAsync()
 {
-    copyAsync(cudaMemcpyHostToDevice, make_h_pitched_ptr(), d_pitched_ptr);
+    //copyAsync(cudaMemcpyHostToDevice, make_h_pitched_ptr(), d_pitched_ptr);
 }
 
 template <typename T>
 void ManagedArray3D<T>::copyFromDevice()
 {
-    copy(cudaMemcpyDeviceToHost, d_pitched_ptr, make_h_pitched_ptr());
+    //copy(cudaMemcpyDeviceToHost, d_pitched_ptr, make_h_pitched_ptr());
 }
 
 template <typename T>
 void ManagedArray3D<T>::copyFromDeviceAsync()
 {
-    copyAsync(cudaMemcpyDeviceToHost, d_pitched_ptr, make_h_pitched_ptr());
+    //copyAsync(cudaMemcpyDeviceToHost, d_pitched_ptr, make_h_pitched_ptr());
 }
 
 }

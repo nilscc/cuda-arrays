@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Array2D.cuh"
+
 namespace CuArrays
 {
 
@@ -17,12 +19,11 @@ class Array3D
 
     private:
 
-        char* d_ptr;
-        size_t pitch;
+        Array2D<T> array2d;
 
         int _N, _M, _O;
 
-        __host__ Array3D(void* d_ptr, size_t pitch, int N, int M, int O);
+        __host__ Array3D(Array2D<T>, int N, int M, int O);
 
     public:
 
@@ -47,9 +48,8 @@ class Array3D
 
 template <typename T>
 __host__
-Array3D<T>::Array3D(void* d_ptr, size_t pitch, int N, int M, int O)
-    : d_ptr((char*) d_ptr)
-    , pitch(pitch)
+Array3D<T>::Array3D(Array2D<T> arr2d, int N, int M, int O)
+    : array2d(arr2d)
     , _N(N)
     , _M(M)
     , _O(O)
@@ -85,14 +85,14 @@ template <typename T>
 __device__
 T& Array3D<T>::get(unsigned int i, unsigned int j, unsigned int k)
 {
-    return * ((T*) ((char*) d_ptr + pitch * (j + _M * k)) + i);
+    return array2d.get(i, _M * j + k);
 }
 
 template <typename T>
 __device__
 const T& Array3D<T>::get(unsigned int i, unsigned int j, unsigned int k) const
 {
-    return * ((T*) ((char*) d_ptr + pitch * (j + _M * k)) + i);
+    return array2d.get(i, _M * j + k);
 }
 
 template <typename T>

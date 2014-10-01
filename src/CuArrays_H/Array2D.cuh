@@ -5,6 +5,9 @@ namespace CuArrays
 
 template <typename T> class ManagedArray2D;
 
+template <typename T> class ManagedArray3D;
+template <typename T> class Array3D;
+
 /*
  * Class definition
  *
@@ -14,6 +17,9 @@ template <typename T>
 class Array2D
 {
     friend class ManagedArray2D<T>;
+
+    friend class Array3D<T>;
+    friend class ManagedArray3D<T>;
 
     private:
 
