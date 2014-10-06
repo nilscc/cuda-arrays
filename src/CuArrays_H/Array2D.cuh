@@ -3,6 +3,7 @@
 namespace CuArrays
 {
 
+template <typename T, template <typename> class DeviceArray> class ManagedArrayND;
 template <typename T> class ManagedArray2D;
 
 template <typename T> class ManagedArray3D;
@@ -16,7 +17,7 @@ template <typename T> class Array3D;
 template <typename T>
 class Array2D
 {
-    friend class ManagedArray2D<T>;
+    friend class ManagedArrayND<T, Array2D>;
 
     friend class Array3D<T>;
     friend class ManagedArray3D<T>;
@@ -24,16 +25,17 @@ class Array2D
     private:
 
         char* d_ptr;
-        size_t pitch;
+        size_t d_pitch;
+
+        void setPitch(size_t);
+        void setDPtr(T*);
 
         int _N, _M;
-
-        __host__
-        Array2D(void* d_ptr, size_t pitch, int N, int M);
 
     public:
 
         __host__ __device__ Array2D();
+        __host__            Array2D(int N, int M);
 
         __device__ int N() const;
         __device__ int M() const;
@@ -52,9 +54,9 @@ class Array2D
 
 template <typename T>
 __host__
-Array2D<T>::Array2D(void* d_ptr, size_t pitch, int N, int M)
-    : d_ptr((char*) d_ptr)
-    , pitch(pitch)
+Array2D<T>::Array2D(int N, int M)
+    : d_ptr(0)
+    , d_pitch(0)
     , _N(N)
 , _M(M)
 {
@@ -82,18 +84,34 @@ int Array2D<T>::M() const
     return _M;
 }
 
+// setter
+template <typename T>
+__host__
+void Array2D<T>::setPitch(size_t pitch)
+{
+    d_pitch = pitch;
+}
+
+// setter
+template <typename T>
+__host__
+void Array2D<T>::setDPtr(T* dptr)
+{
+    d_ptr = (char*) dptr;
+}
+
 template <typename T>
 __device__
 T& Array2D<T>::operator()(unsigned int i, unsigned int j)
 {
-    return * ((T*) ((char*) d_ptr + j * pitch) + i);
+    return * ((T*) ((char*) d_ptr + j * d_pitch) + i);
 }
 
 template <typename T>
 __device__
 const T& Array2D<T>::operator()(unsigned int i, unsigned int j) const
 {
-    return * ((T*) ((char*) d_ptr + j * pitch) + i);
+    return * ((T*) ((char*) d_ptr + j * d_pitch) + i);
 }
 
 template <typename T>

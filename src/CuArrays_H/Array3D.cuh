@@ -6,6 +6,7 @@ namespace CuArrays
 {
 
 template <typename T> class ManagedArray3D;
+template <typename T, template <typename> class DeviceArray> class ManagedArrayND;
 
 /*
  * 3D arrays
@@ -15,7 +16,7 @@ template <typename T> class ManagedArray3D;
 template <typename T>
 class Array3D
 {
-    friend class ManagedArray3D<T>;
+    friend class ManagedArrayND<T, Array3D>;
 
     private:
 
@@ -23,11 +24,15 @@ class Array3D
 
         int _N, _M, _O;
 
-        __host__ Array3D(Array2D<T>, int N, int M, int O);
+    protected:
+
+        void setPitch(size_t);
+        void setDPtr(T*);
 
     public:
 
         __device__ __host__ Array3D();
+                   __host__ Array3D(int N, int M, int O);
 
         __device__ int N() const;
         __device__ int M() const;
@@ -48,8 +53,8 @@ class Array3D
 
 template <typename T>
 __host__
-Array3D<T>::Array3D(Array2D<T> arr2d, int N, int M, int O)
-    : array2d(arr2d)
+Array3D<T>::Array3D(int N, int M, int O)
+    : array2d(Array2D<T>(N, M * O))
     , _N(N)
     , _M(M)
     , _O(O)
@@ -59,7 +64,22 @@ Array3D<T>::Array3D(Array2D<T> arr2d, int N, int M, int O)
 template <typename T>
 __device__ __host__
 Array3D<T>::Array3D()
+    : array2d(Array2D<T>())
 {
+}
+
+template <typename T>
+__host__
+void Array3D<T>::setPitch(size_t pitch)
+{
+    array2d.setPitch(pitch);
+}
+
+template <typename T>
+__host__
+void Array3D<T>::setDPtr(T* dptr)
+{
+    array2d.setDPtr(dptr);
 }
 
 template <typename T>
