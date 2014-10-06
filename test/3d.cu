@@ -10,8 +10,12 @@ __global__ void device_test()
 {
     using namespace Test;
 
-    assert(test(0,0,0) == 1);
-    assert(test(1,1,1) == 1);
+    assert( test(0,0,0) == 0 );
+    assert( test(0,0,1) == 1 );
+    assert( test(0,1,1) == 2 );
+    assert( test(1,1,1) == 1 );
+    assert( test(1,1,0) == 0 );
+    assert( test(1,0,0) == -1 );
 }
 
 void host_test()
@@ -24,22 +28,33 @@ void host_test()
     {
         for (int j = 0; j < 2; j++)
         {
-            int d = abs<int>(i - j);
             for (int k = 0; k < 2; k++)
-                test(i,j,k) = i + d * (i < j ? 1 : -1);
+            {
+                int a = abs<int>(i - j);
+                int b = abs<int>(i - k);
+                test(i,j,k) = i + a * (i < j ? 1 : -1)
+                                + b * (i < k ? 1 : -1);
+            }
         }
     }
 
-    test.copyToDevice();
+    assert( test(0,0,0) == 0 );
+    assert( test(0,0,1) == 1 );
+    assert( test(0,1,1) == 2 );
+    assert( test(1,1,1) == 1 );
+    assert( test(1,1,0) == 0 );
+    assert( test(1,0,0) == -1 );
 
-    assert(test(0,0,0) == 0);
-    assert(test(1,1,1) == 1);
+    test.copyToDevice();
 }
 
 int main()
 {
     host_test();
     device_test<<<1,1>>>();
+
+    cudaDeviceSynchronize();
+    assert(cudaGetLastError() == cudaSuccess);
 
     return 0;
 }

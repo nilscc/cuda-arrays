@@ -19,7 +19,7 @@ CXX ?= clang++
 
 CXX_INCLUDES = -I../src
 
-CXX_FLAGS = -std=c++11 -O3 -G -g $(CXX_INCLUDES)
+CXX_FLAGS = -Wall -std=c++11 -O3 -G -g $(CXX_INCLUDES)
 CXX_LIBS  =
 CXX_DEPS  = $(TEST_CXX_DEPS)
 
@@ -29,7 +29,7 @@ CXX_DEPS  = $(TEST_CXX_DEPS)
 
 NVCC = nvcc
 
-NVCC_FLAGS    = -arch=sm_30 -O3 -G -g $(CXX_INCLUDES)
+NVCC_FLAGS    = -arch=sm_50 -G -g $(CXX_INCLUDES) --compiler-options -Wall
 NVCC_LIBS     = $(CXX_LIBS)
 NVCC_DEPS     = $(TEST_CU_DEPS)
 
@@ -38,7 +38,7 @@ NVCC_DEPS     = $(TEST_CU_DEPS)
 #
 .PHONY: all clean run-tests
 
-all: run-tests
+all: $(TESTS)
 
 clean:
 	@echo "Removing $(BUILD_DIR)"
@@ -61,7 +61,7 @@ $(BUILD_DIR)/%: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
 # Dependencies
 $(BUILD_DIR)/%.d: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
 	@echo "Generating $@"
-	@$(CXX) $(CXX_FLAGS) -MM -MT $(@:%.d=%.o) $< > $@
+	@$(CXX) $(CXX_FLAGS) -MM -MT $(@:%.cpp.d=%) $< > $@
 
 #
 # 
@@ -74,7 +74,7 @@ $(BUILD_DIR)/%: $(SRC_DIR)/%.cu | $(BUILD_DIR)
 # Dependencies
 $(BUILD_DIR)/%.d: $(SRC_DIR)/% | $(BUILD_DIR)
 	@echo "Generating $@"
-	@$(NVCC) $(NVCC_FLAGS) -M -MT $(@:%.d=%.o) $< > $@
+	@$(NVCC) $(NVCC_FLAGS) -M -MT $(@:%.cu.d=%) $< > $@
 
 ifneq ($(MAKECMDGOALS),clean)
 -include $(CXX_DEPS) $(NVCC_DEPS)

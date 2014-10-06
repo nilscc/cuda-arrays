@@ -12,6 +12,8 @@ __global__ void device_test()
 
     assert(test(0,0) == 1);
     assert(test(1,1) == 1);
+
+    printf("OK!\n");
 }
 
 void host_test()
@@ -34,6 +36,9 @@ int main()
 
     host_test();
     device_test<<<1,1>>>();
+
+    cudaDeviceSynchronize();
+    assert(cudaGetLastError() == cudaSuccess);
 
     return 0;
 }
