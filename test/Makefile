@@ -29,7 +29,7 @@ CXX_DEPS  = $(TEST_CXX_DEPS)
 
 NVCC = nvcc
 
-NVCC_FLAGS    = $(CXX_FLAGS) -arch=sm_30
+NVCC_FLAGS    = -arch=sm_30 -O3 -G -g $(CXX_INCLUDES)
 NVCC_LIBS     = $(CXX_LIBS)
 NVCC_DEPS     = $(TEST_CU_DEPS)
 
