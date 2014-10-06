@@ -72,11 +72,10 @@ $(BUILD_DIR)/%: $(SRC_DIR)/%.cu | $(BUILD_DIR)
 	@$(NVCC) $(NVCC_FLAGS) $< -o $@ $(NVCC_LIBS)
 
 # Dependencies
-$(BUILD_DIR)/%.d: $(SRC_DIR)/%.cu | $(BUILD_DIR)
+$(BUILD_DIR)/%.d: $(SRC_DIR)/% | $(BUILD_DIR)
 	@echo "Generating $@"
 	@$(NVCC) $(NVCC_FLAGS) -M -MT $(@:%.d=%.o) $< > $@
 
 ifneq ($(MAKECMDGOALS),clean)
--include $(CXX_DEPS)
--include $(NVCC_DEPS)
+-include $(CXX_DEPS) $(NVCC_DEPS)
 endif
