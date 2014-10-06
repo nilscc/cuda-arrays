@@ -26,14 +26,14 @@ void host_test()
     assert(test(0,0) == 1);
     assert(test(1,1) == 1);
 
-    // test.copyToDevice();
+    test.copyToDevice();
 }
 
 int main()
 {
 
     host_test();
-    // device_test<<<1,1>>>();
+    device_test<<<1,1>>>();
 
     return 0;
 }

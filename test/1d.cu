@@ -23,16 +23,19 @@ void host_test()
     for (int i = 0; i < 2; i++)
         test(i) = 1;
 
+    test.copyToDevice();
+
     assert(test(0) == 1);
     assert(test(1) == 1);
-
-    // test.copyToDevice();
 }
 
 int main()
 {
-    // host_test();
-    // device_test<<<1,1>>>();
+    host_test();
+    device_test<<<1,1>>>();
+
+    cudaDeviceSynchronize();
+    assert(cudaGetLastError() == cudaSuccess);
 
     return 0;
 }
