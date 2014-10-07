@@ -31,6 +31,11 @@ class ManagedArray
 
         ManagedArray(Array<T> &symbol);
 
+    private: // delete copy constructor
+        ManagedArray(const ManagedArray<T> &copy);
+
+    public:
+
         T& get(unsigned int i);
         const T& get(unsigned int i) const;
 
