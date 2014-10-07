@@ -14,13 +14,9 @@ __global__ void device_test()
     assert(test(1) == 1);
 }
 
-void host_test()
+void host_test(CuArrays::ManagedArray<int> &test)
 {
-    CuArrays::ManagedArray<int> test(Test::test);
-
-    test.malloc(2);
-
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < test.N(); i++)
         test(i) = 1;
 
     test.copyToDevice();
@@ -31,11 +27,16 @@ void host_test()
 
 int main()
 {
-    host_test();
+    CuArrays::ManagedArray<int> test(Test::test);
+    test.malloc(2);
+
+    host_test(test);
     device_test<<<1,1>>>();
 
     cudaDeviceSynchronize();
     assert(cudaGetLastError() == cudaSuccess);
+
+    test.free();
 
     return 0;
 }

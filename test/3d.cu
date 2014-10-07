@@ -18,7 +18,17 @@ __global__ void device_test()
     assert( test(1,0,0) == -1 );
 }
 
-void host_test()
+void host_test(CuArrays::ManagedArray3D<int> &test)
+{
+    assert( test(0,0,0) == 0 );
+    assert( test(0,0,1) == 1 );
+    assert( test(0,1,1) == 2 );
+    assert( test(1,1,1) == 1 );
+    assert( test(1,1,0) == 0 );
+    assert( test(1,0,0) == -1 );
+}
+
+int main()
 {
     CuArrays::ManagedArray3D<int> test(Test::test);
 
@@ -38,19 +48,10 @@ void host_test()
         }
     }
 
-    assert( test(0,0,0) == 0 );
-    assert( test(0,0,1) == 1 );
-    assert( test(0,1,1) == 2 );
-    assert( test(1,1,1) == 1 );
-    assert( test(1,1,0) == 0 );
-    assert( test(1,0,0) == -1 );
-
     test.copyToDevice();
-}
 
-int main()
-{
-    host_test();
+    // run tests
+    host_test(test);
     device_test<<<1,1>>>();
 
     cudaDeviceSynchronize();
