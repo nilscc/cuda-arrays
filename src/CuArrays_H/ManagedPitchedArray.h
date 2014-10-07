@@ -8,7 +8,7 @@ namespace CuArrays
 template <typename T, template <typename> class DeviceArray>
 class ManagedPitchedArray
 {
-private:
+protected:
 
     size_t _sizeX, _sizeY, _dpitch;
 
@@ -18,6 +18,9 @@ private:
 public:
 
     ManagedPitchedArray(DeviceArray<T> &symbol);
+
+private: // disable copy constructor
+    ManagedPitchedArray(const ManagedPitchedArray &copy); // no implementation
 
 protected:
 
@@ -79,7 +82,7 @@ void ManagedPitchedArray<T, DeviceArray>::mallocDevice(
 
     cudaVerify( cudaMemcpyToSymbol(_symbol, &arr, sizeof(DeviceArray<T>)) );
 }
-        
+
 template <typename T, template <typename> class DeviceArray>
 void ManagedPitchedArray<T, DeviceArray>::mallocHost(int N, int M)
 {
@@ -108,7 +111,7 @@ void ManagedPitchedArray<T, DeviceArray>::free()
     {
         // store empty array at symbol
         DeviceArray<T> arr;
-        cudaVerify( cudaMemcpyToSymbol(&arr, _symbol, sizeof(DeviceArray<T>)) );
+        cudaVerify( cudaMemcpyToSymbol(_symbol, &arr, sizeof(DeviceArray<T>)) );
 
         // free actual memory
         cudaVerify( cudaFree(_dptr) );

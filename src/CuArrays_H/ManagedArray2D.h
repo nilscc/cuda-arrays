@@ -34,6 +34,9 @@ public:
         mallocHost(N, M);
     }
 
+    int N() const { return ManagedPitchedArray<T,Array2D>::_sizeX; }
+    int M() const { return ManagedPitchedArray<T,Array2D>::_sizeY; }
+
           T& operator()(unsigned int i, unsigned j)       { return ManagedPitchedArray<T, Array2D>::get(i, j); }
     const T& operator()(unsigned int i, unsigned j) const { return ManagedPitchedArray<T, Array2D>::get(i, j); }
 };
