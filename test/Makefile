@@ -17,7 +17,7 @@ TESTS = \
 
 CXX ?= clang++
 
-CXX_INCLUDES = -I../src
+CXX_INCLUDES = -I../src -I../../cuda-particle-simulation/cub-1.3.1
 
 CXX_FLAGS = -Wall -std=c++11 -O3 -G -g $(CXX_INCLUDES)
 CXX_LIBS  =
@@ -29,7 +29,8 @@ CXX_DEPS  = $(TEST_CXX_DEPS)
 
 NVCC = nvcc
 
-NVCC_FLAGS    = -arch=sm_50 -G -g $(CXX_INCLUDES) --compiler-options -Wall
+NVCC_INCLUDES = $(CXX_INCLUDES)
+NVCC_FLAGS    = -arch=sm_50 -G -g $(NVCC_INCLUDES) --compiler-options -Wall
 NVCC_LIBS     = $(CXX_LIBS)
 NVCC_DEPS     = $(TEST_CU_DEPS)
 
