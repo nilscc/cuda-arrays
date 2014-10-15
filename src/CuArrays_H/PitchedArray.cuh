@@ -9,15 +9,15 @@ class PitchedArray
 protected:
 
     size_t d_pitch;
-    char *d_ptr;
+    T *d_ptr;
 
 public:
 
     void setPitch(size_t p) { d_pitch = p; }
-    void setDPtr(T* ptr) { d_ptr = (char*) ptr; }
+    void setDPtr(T* ptr)    { d_ptr   = ptr; }
 
     __device__ __host__
-    static T* devicePtrAt(char *d_ptr, size_t d_pitch, unsigned int i, unsigned int j)
+    static T* devicePtrAt(T *d_ptr, size_t d_pitch, unsigned int i, unsigned int j)
     {
         return (T*) ((char*) d_ptr + j * d_pitch) + i;
     }
