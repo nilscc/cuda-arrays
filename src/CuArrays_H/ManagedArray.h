@@ -42,6 +42,9 @@ class ManagedArray
         T& operator()(unsigned int i);
         const T& operator()(unsigned int i) const;
 
+              T* devicePtr()       { return d_ptr; }
+        const T* devicePtr() const { return d_ptr; }
+
         int N() const;
 
         void mallocDevice(int N);

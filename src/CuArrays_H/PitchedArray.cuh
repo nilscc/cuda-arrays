@@ -16,14 +16,34 @@ public:
     void setPitch(size_t p) { d_pitch = p; }
     void setDPtr(T* ptr) { d_ptr = (char*) ptr; }
 
-    __device__ T& get(unsigned int i, unsigned int j)
+    __device__ __host__
+    static T* devicePtrAt(char *d_ptr, size_t d_pitch, unsigned int i, unsigned int j)
     {
-        return * ((T*) ((char*) d_ptr + j * d_pitch) + i);
+        return (T*) ((char*) d_ptr + j * d_pitch) + i;
     }
 
-    __device__ const T& get(unsigned int i, unsigned int j) const
+    __device__ __host__
+    inline T* devicePtrAt(unsigned int i, unsigned int j)
     {
-        return * ((T*) ((char*) d_ptr + j * d_pitch) + i);
+        return PitchedArray<T>::devicePtrAt(d_ptr, d_pitch, i, j);
+    }
+
+    __device__ __host__
+    inline const T* devicePtrAt(unsigned int i, unsigned int j) const
+    {
+        return PitchedArray<T>::devicePtrAt(d_ptr, d_pitch, i, j);
+    }
+
+    __device__
+    T& get(unsigned int i, unsigned int j)
+    {
+        return *devicePtrAt(i,j);
+    }
+
+    __device__
+    const T& get(unsigned int i, unsigned int j) const
+    {
+        return *devicePtrAt(i,j);
     }
 };
 

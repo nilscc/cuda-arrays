@@ -41,6 +41,9 @@ protected:
 
           T& get(size_t i, size_t j);
     const T& get(size_t i, size_t j) const;
+
+    inline       T* devicePtrAt(size_t i, size_t j);
+    inline const T* devicePtrAt(size_t i, size_t j) const;
 };
 
 /*
@@ -186,6 +189,18 @@ template <typename T, template <typename> class DeviceArray>
 const T& ManagedPitchedArray<T, DeviceArray>::get(size_t i, size_t j) const
 {
     return *(_hptr + j * _sizeX + i);
+}
+
+template <typename T, template <typename> class DeviceArray>
+T* ManagedPitchedArray<T, DeviceArray>::devicePtrAt(size_t i, size_t j)
+{
+    return DeviceArray<T>::devicePtrAt(_dptr, _dpitch, i, j);
+}
+
+template <typename T, template <typename> class DeviceArray>
+const T* ManagedPitchedArray<T, DeviceArray>::devicePtrAt(size_t i, size_t j) const
+{
+    return DeviceArray<T>::devicePtrAt(_dptr, _dpitch, i, j);
 }
 
 }

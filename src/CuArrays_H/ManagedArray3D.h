@@ -40,6 +40,16 @@ public:
         return ManagedPitchedArray<T, Array3D>::get()(i, _M * j + k);
     }
 
+    inline T* devicePtrAt(size_t i, size_t j, size_t k)
+    {
+        return ManagedPitchedArray<T, Array3D>::devicePtrAt(i, _M * j + k);
+    }
+
+    inline const T* devicePtrAt(size_t i, size_t j, size_t k) const
+    {
+        return ManagedPitchedArray<T, Array3D>::devicePtrAt(i, _M * j + k);
+    }
+
     /*
      * Malloc
      *

@@ -37,6 +37,9 @@ public:
     int N() const { return ManagedPitchedArray<T,Array2D>::_sizeX; }
     int M() const { return ManagedPitchedArray<T,Array2D>::_sizeY; }
 
+    inline       T* devicePtrAt(int i, int j)       { return ManagedPitchedArray<T, Array2D>::devicePtrAt(i,j); }
+    inline const T* devicePtrAt(int i, int j) const { return ManagedPitchedArray<T, Array2D>::devicePtrAt(i,j); }
+
           T& operator()(unsigned int i, unsigned j)       { return ManagedPitchedArray<T, Array2D>::get(i, j); }
     const T& operator()(unsigned int i, unsigned j) const { return ManagedPitchedArray<T, Array2D>::get(i, j); }
 };
