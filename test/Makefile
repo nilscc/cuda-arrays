@@ -30,7 +30,7 @@ CXX_DEPS  = $(TEST_CXX_DEPS)
 NVCC = nvcc
 
 NVCC_INCLUDES = $(CXX_INCLUDES)
-NVCC_FLAGS    = -arch=sm_50 -G -g $(NVCC_INCLUDES) --compiler-options -Wall
+NVCC_FLAGS    = -arch=sm_35 -G -g $(NVCC_INCLUDES) --compiler-options -Wall
 NVCC_LIBS     = $(CXX_LIBS)
 NVCC_DEPS     = $(TEST_CU_DEPS)
 
