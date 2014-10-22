@@ -12,7 +12,7 @@ class ManagedArray3D : public ManagedPitchedArray<T, Array3D>
 {
 private:
 
-    int _N, _M, _O;
+    int _M, _O;
 
 public:
 
@@ -26,28 +26,28 @@ public:
      *
      */
 
-    int N() const { return _N; }
+    int N() const { return ManagedPitchedArray<T, Array3D>::_sizeX; }
     int M() const { return _M; }
     int O() const { return _O; }
 
     T& operator()(unsigned int i, unsigned int j, unsigned k)
     {
-        return ManagedPitchedArray<T, Array3D>::get(i, _M * j + k);
+        return ManagedPitchedArray<T, Array3D>::get(i, j + _M * k);
     }
 
     const T& operator()(unsigned int i, unsigned int j, unsigned k) const
     {
-        return ManagedPitchedArray<T, Array3D>::get()(i, _M * j + k);
+        return ManagedPitchedArray<T, Array3D>::get()(i, j + _M * k);
     }
 
     inline T* devicePtrAt(size_t i, size_t j, size_t k)
     {
-        return ManagedPitchedArray<T, Array3D>::devicePtrAt(i, _M * j + k);
+        return ManagedPitchedArray<T, Array3D>::devicePtrAt(i, j + _M * k);
     }
 
     inline const T* devicePtrAt(size_t i, size_t j, size_t k) const
     {
-        return ManagedPitchedArray<T, Array3D>::devicePtrAt(i, _M * j + k);
+        return ManagedPitchedArray<T, Array3D>::devicePtrAt(i, j + _M * k);
     }
 
     /*

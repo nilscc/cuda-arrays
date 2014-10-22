@@ -68,14 +68,14 @@ template <typename T>
 __device__
 T& Array3D<T>::operator()(unsigned int i, unsigned int j, unsigned int k)
 {
-    return PitchedArray<T>::get(i, _M * j + k);
+    return PitchedArray<T>::get(i, j + _M * k);
 }
 
 template <typename T>
 __device__
 const T& Array3D<T>::operator()(unsigned int i, unsigned int j, unsigned int k) const
 {
-    return PitchedArray<T>::get(i, _M * j + k);
+    return PitchedArray<T>::get(i, j + _M * k);
 }
 
 }
