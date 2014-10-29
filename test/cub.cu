@@ -89,6 +89,7 @@ int main()
     test1d.copyToDevice();
 
     assert( 50 == sum(test1d.devicePtr(), test1d.N()) );
+    assert( 50 == sum(test1d.devicePtr(), test1d.N()) );
 
     /*
      * 2D test
@@ -104,7 +105,10 @@ int main()
 
     // sum over each row
     for (int j = 0; j < test2d.M(); j++)
+    {
         assert( 50 == sum(test2d.devicePtrAt(0, j), test2d.N()) );
+        assert( 50 == sum(test2d.devicePtrAt(0, j), test2d.N()) );
+    }
 
     /*
      * 3D test
@@ -120,6 +124,11 @@ int main()
     test3d.copyToDevice();
 
     for (int j = 0; j < test3d.M(); j++)
+    {
         for (int k = 0; k < test3d.O(); k++)
+        {
             assert( 50 == sum(test3d.devicePtrAt(0, j, k), test3d.N()) );
+            assert( 50 == sum(test3d.devicePtrAt(0, j, k), test3d.N()) );
+        }
+    }
 }
