@@ -141,14 +141,15 @@ void ManagedArray<T>::freeDevice()
 {
     using namespace cuda_utils;
 
-    assert(d_ptr != 0);
+    if (d_ptr != 0)
+    {
+        Array<T> arr;
 
-    Array<T> arr;
+        cudaVerify( cudaMemcpyFromSymbol(&arr, symbol, sizeof(Array<T>)) );
+        cudaVerify( cudaFree(arr.d_ptr) );
 
-    cudaVerify( cudaMemcpyFromSymbol(&arr, symbol, sizeof(Array<T>)) );
-    cudaVerify( cudaFree(arr.d_ptr) );
-
-    d_ptr = 0;
+        d_ptr = 0;
+    }
 }
 
 template <typename T>
@@ -156,11 +157,11 @@ void ManagedArray<T>::freeHost()
 {
     using namespace cuda_utils;
 
-    assert(h_ptr != 0);
-
-    cudaVerify( cudaFreeHost(h_ptr) );
-
-    h_ptr = 0;
+    if (h_ptr != 0)
+    {
+        cudaVerify( cudaFreeHost(h_ptr) );
+        h_ptr = 0;
+    }
 }
 
 template <typename T>
